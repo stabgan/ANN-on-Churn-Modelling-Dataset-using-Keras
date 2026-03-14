@@ -1,7 +1,13 @@
 # Artificial Neural Network
 
-# Installing TensorFlow (includes Keras)
+# Installing Theano
+# pip install --upgrade --no-deps git+git://github.com/Theano/Theano.git
+
+# Installing Tensorflow
 # pip install tensorflow
+
+# Installing Keras
+# pip install --upgrade keras
 
 # Part 1 - Data Preprocessing
 
@@ -17,18 +23,12 @@ y = dataset.iloc[:, 13].values
 
 # Encoding categorical data
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-
 labelencoder_X_1 = LabelEncoder()
 X[:, 1] = labelencoder_X_1.fit_transform(X[:, 1])
 labelencoder_X_2 = LabelEncoder()
 X[:, 2] = labelencoder_X_2.fit_transform(X[:, 2])
-
-ct = ColumnTransformer(
-    transformers=[('encoder', OneHotEncoder(), [1])],
-    remainder='passthrough'
-)
-X = ct.fit_transform(X).astype(float)
+onehotencoder = OneHotEncoder(categorical_features = [1])
+X = onehotencoder.fit_transform(X).toarray()
 X = X[:, 1:]
 
 # Splitting the dataset into the Training set and Test set
@@ -44,9 +44,9 @@ X_test = sc.transform(X_test)
 # Part 2 - Now let's make the ANN!
 
 # Importing the Keras libraries and packages
-from tensorflow import keras
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+import keras
+from keras.models import Sequential
+from keras.layers import Dense
 
 # Initialising the ANN
 classifier = Sequential()
