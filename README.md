@@ -1,48 +1,60 @@
-# Artificial Neural Network
-I implemented a simple ANN on the Churn Modelling Dataset and then after training tested on a single data to predict values
+# ANN Customer Churn Prediction
 
-The idea of ANNs is based on the belief that working of human brain by making the right connections, can be imitated using silicon and wires as living neurons and dendrites.
+Predict whether a bank customer will leave (churn) using a Keras artificial neural network trained on 10 000 records.
 
-The human brain is composed of 86 billion nerve cells called neurons. They are connected to other thousand cells by Axons. Stimuli from external environment or inputs from sensory organs are accepted by dendrites. These inputs create electric impulses, which quickly travel through the neural network. A neuron can then send the message to other neuron to handle the issue or does not send it forward.
+## Overview
 
-Structure of Neuron
-ANNs are composed of multiple nodes, which imitate biological neurons of human brain. The neurons are connected by links and they interact with each other. The nodes can take input data and perform simple operations on the data. The result of these operations is passed to other neurons. The output at each node is called its activation or node value.
+Two scripts build, evaluate, and tune a binary-classification ANN on the [Churn Modelling dataset](Churn_Modelling.csv):
 
-Each link is associated with weight. ANNs are capable of learning, which takes place by altering weight values. The following illustration shows a simple ANN −
+| File | What it does |
+|---|---|
+| `ann_new.py` | Preprocesses data, trains a 2-hidden-layer ANN (6-6-1), predicts on the test set and a single new customer |
+| `evaluating_improving_tuning.py` | Same base model **plus** 10-fold cross-validation and `GridSearchCV` hyperparameter tuning (batch size, epochs, optimizer) |
 
-A Typical ANN
-Types of Artificial Neural Networks
-There are two Artificial Neural Network topologies − FeedForward and Feedback.
+### Model architecture
 
-FeedForward ANN
-The information flow is unidirectional. A unit sends information to other unit from which it does not receive any information. There are no feedback loops. They are used in pattern generation/recognition/classification. They have fixed inputs and outputs.
+```
+Input (11 features) → Dense(6, relu) → Dense(6, relu) → Dense(1, sigmoid)
+```
 
-FeedForward ANN
-FeedBack ANN
-Here, feedback loops are allowed. They are used in content addressable memories.
+Optimizer: Adam · Loss: binary cross-entropy · Epochs: 100 · Batch size: 10
 
-FeedBack ANN
-Working of ANNs
-In the topology diagrams shown, each arrow represents a connection between two neurons and indicates the pathway for the flow of information. Each connection has a weight, an integer number that controls the signal between the two neurons.
+### Dataset
 
-If the network generates a “good or desired” output, there is no need to adjust the weights. However, if the network generates a “poor or undesired” output or an error, then the system alters the weights in order to improve subsequent results.
+`Churn_Modelling.csv` — 10 000 rows, 14 columns (credit score, geography, gender, age, tenure, balance, etc.). Target column: `Exited` (1 = churned).
 
-Machine Learning in ANNs
-ANNs are capable of learning and they need to be trained. There are several learning strategies −
+## Dependencies
 
-Supervised Learning − It involves a teacher that is scholar than the ANN itself. For example, the teacher feeds some example data about which the teacher already knows the answers.
+- Python 3.x
+- NumPy
+- Pandas
+- Matplotlib
+- scikit-learn
+- TensorFlow / Keras
 
-For example, pattern recognizing. The ANN comes up with guesses while recognizing. Then the teacher provides the ANN with the answers. The network then compares it guesses with the teacher’s “correct” answers and makes adjustments according to errors.
+```bash
+pip install numpy pandas matplotlib scikit-learn tensorflow
+```
 
-Unsupervised Learning − It is required when there is no example data set with known answers. For example, searching for a hidden pattern. In this case, clustering i.e. dividing a set of elements into groups according to some unknown pattern is carried out based on the existing data sets present.
+## Usage
 
-Reinforcement Learning − This strategy built on observation. The ANN makes a decision by observing its environment. If the observation is negative, the network adjusts its weights to be able to make a different required decision the next time.
+```bash
+# Train and predict
+python ann_new.py
 
-Back Propagation Algorithm
-It is the training or learning algorithm. It learns by example. If you submit to the algorithm the example of what you want the network to do, it changes the network’s weights so that it can produce desired output for a particular input on finishing the training.
+# Train, cross-validate, and grid-search
+python evaluating_improving_tuning.py
+```
 
-Back Propagation networks are ideal for simple Pattern Recognition and Mapping Tasks.
+## Known Bugs & Deprecations
 
+| Issue | Location | Fix |
+|---|---|---|
+| `OneHotEncoder(categorical_features=[1])` removed in scikit-learn ≥ 0.22 | both scripts | Use `ColumnTransformer` + `OneHotEncoder` instead |
+| `from keras.wrappers.scikit_learn import KerasClassifier` removed in Keras 3 / TF 2.16+ | `evaluating_improving_tuning.py` | Use `scikeras.wrappers.KerasClassifier` (`pip install scikeras`) |
+| `Dropout(p=0.1)` — parameter is `rate`, not `p` | `evaluating_improving_tuning.py` (commented out) | Change to `Dropout(rate=0.1)` |
+| Top-level `import keras` may fail without standalone Keras installed | both scripts | Use `from tensorflow import keras` or install `keras` separately |
 
+## License
 
-
+[MIT](LICENSE)
