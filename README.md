@@ -2,38 +2,45 @@
 
 Predict whether a bank customer will leave (churn) using a Keras artificial neural network trained on 10 000 records.
 
-## Overview
+## What It Does
 
-Two scripts build, evaluate, and tune a binary-classification ANN on the [Churn Modelling dataset](Churn_Modelling.csv):
+Builds, trains, and evaluates a binary-classification ANN on the **Churn Modelling** dataset. Two scripts cover the full workflow:
 
-| File | What it does |
+| Script | Purpose |
 |---|---|
-| `ann_new.py` | Preprocesses data, trains a 2-hidden-layer ANN (6-6-1), predicts on the test set and a single new customer |
-| `evaluating_improving_tuning.py` | Same base model **plus** 10-fold cross-validation and `GridSearchCV` hyperparameter tuning (batch size, epochs, optimizer) |
+| `ann_new.py` | Preprocess → train a 2-hidden-layer ANN → predict on test set + single customer |
+| `evaluating_improving_tuning.py` | Same base model **plus** 10-fold cross-validation and `GridSearchCV` hyperparameter tuning |
 
-### Model architecture
+## Model Architecture
 
 ```
 Input (11 features) → Dense(6, relu) → Dense(6, relu) → Dense(1, sigmoid)
 ```
 
-Optimizer: Adam · Loss: binary cross-entropy · Epochs: 100 · Batch size: 10
+- **Optimizer:** Adam
+- **Loss:** Binary cross-entropy
+- **Epochs:** 100 · **Batch size:** 10
 
-### Dataset
+## Dataset
 
-`Churn_Modelling.csv` — 10 000 rows, 14 columns (credit score, geography, gender, age, tenure, balance, etc.). Target column: `Exited` (1 = churned).
+`Churn_Modelling.csv` — 10 000 rows × 14 columns (credit score, geography, gender, age, tenure, balance, etc.).
+Target: `Exited` (1 = churned).
 
-## Dependencies
+## 🛠 Tech Stack
 
-- Python 3.x
-- NumPy
-- Pandas
-- Matplotlib
-- scikit-learn
-- TensorFlow / Keras
+| | Technology | Role |
+|---|---|---|
+| 🐍 | Python 3.9+ | Language |
+| 🧠 | TensorFlow / Keras | Neural network |
+| 📊 | scikit-learn | Preprocessing, CV, grid search |
+| 🔗 | scikeras | sklearn ↔ Keras bridge |
+| 🔢 | NumPy / Pandas | Data handling |
+| 📈 | Matplotlib | Plotting |
+
+## Installation
 
 ```bash
-pip install numpy pandas matplotlib scikit-learn tensorflow
+pip install -r requirements.txt
 ```
 
 ## Usage
@@ -46,14 +53,19 @@ python ann_new.py
 python evaluating_improving_tuning.py
 ```
 
-## Known Bugs & Deprecations
+## Notebooks
 
-| Issue | Location | Fix |
-|---|---|---|
-| `OneHotEncoder(categorical_features=[1])` removed in scikit-learn ≥ 0.22 | both scripts | Use `ColumnTransformer` + `OneHotEncoder` instead |
-| `from keras.wrappers.scikit_learn import KerasClassifier` removed in Keras 3 / TF 2.16+ | `evaluating_improving_tuning.py` | Use `scikeras.wrappers.KerasClassifier` (`pip install scikeras`) |
-| `Dropout(p=0.1)` — parameter is `rate`, not `p` | `evaluating_improving_tuning.py` (commented out) | Change to `Dropout(rate=0.1)` |
-| Top-level `import keras` may fail without standalone Keras installed | both scripts | Use `from tensorflow import keras` or install `keras` separately |
+| Notebook | Description |
+|---|---|
+| `Q1 TSA modelling IBM stock price.ipynb` | Time-series analysis of daily IBM stock prices (1980–1992) |
+| `nb/Gemma3_(4B).ipynb` | Gemma 3 (4B) fine-tuning with Unsloth on Colab |
+| `nb/Qwen3_(14B)-Reasoning-Conversational.ipynb` | Qwen3 14B reasoning/conversational fine-tuning |
+| `site/en/gemma/docs/core/lora_tuning.ipynb` | Gemma LoRA tuning reference notebook |
+
+## ⚠️ Known Issues
+
+- `evaluating_improving_tuning.py` grid search with `n_jobs=-1` may hang on some systems due to TensorFlow multiprocessing. Set `n_jobs=1` if that happens.
+- Dropout layers are commented out; uncomment and tune `rate` if overfitting occurs.
 
 ## License
 
