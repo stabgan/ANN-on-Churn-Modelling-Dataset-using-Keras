@@ -1,60 +1,93 @@
-# ANN Customer Churn Prediction
+# 🧠 ANN Customer Churn Prediction
 
-Predict whether a bank customer will leave (churn) using a Keras artificial neural network trained on 10 000 records.
+Predict whether a bank customer will leave (churn) using an Artificial Neural Network built with TensorFlow/Keras, trained on 10,000 customer records.
 
-## Overview
+## 📖 Description
 
-Two scripts build, evaluate, and tune a binary-classification ANN on the [Churn Modelling dataset](Churn_Modelling.csv):
+This project builds, evaluates, and tunes a binary-classification ANN on the **Churn Modelling** dataset. It demonstrates a complete deep learning pipeline — from data preprocessing and encoding through model training, prediction, cross-validation, and hyperparameter tuning via grid search.
 
-| File | What it does |
+| File | Purpose |
 |---|---|
-| `ann_new.py` | Preprocesses data, trains a 2-hidden-layer ANN (6-6-1), predicts on the test set and a single new customer |
-| `evaluating_improving_tuning.py` | Same base model **plus** 10-fold cross-validation and `GridSearchCV` hyperparameter tuning (batch size, epochs, optimizer) |
+| `ann_new.py` | Preprocesses data, trains a 2-hidden-layer ANN, predicts on the test set and a single new customer |
+| `evaluating_improving_tuning.py` | Same base model **plus** 10-fold cross-validation and `GridSearchCV` hyperparameter tuning |
 
-### Model architecture
+## 🏗️ Architecture
 
 ```
-Input (11 features) → Dense(6, relu) → Dense(6, relu) → Dense(1, sigmoid)
+Input (11 features)
+       │
+       ▼
+┌──────────────┐
+│ Dense(6, ReLU)│  ← Hidden Layer 1
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│ Dense(6, ReLU)│  ← Hidden Layer 2
+└──────┬───────┘
+       │
+       ▼
+┌─────────────────┐
+│Dense(1, Sigmoid) │  ← Output Layer
+└─────────────────┘
 ```
 
-Optimizer: Adam · Loss: binary cross-entropy · Epochs: 100 · Batch size: 10
+- **Optimizer:** Adam
+- **Loss:** Binary Cross-Entropy
+- **Epochs:** 100 (default)
+- **Batch Size:** 10 (default)
 
-### Dataset
+## 🛠️ Tech Stack
 
-`Churn_Modelling.csv` — 10 000 rows, 14 columns (credit score, geography, gender, age, tenure, balance, etc.). Target column: `Exited` (1 = churned).
+| Tool | Version |
+|---|---|
+| 🐍 Python | 3.8+ |
+| 🔢 NumPy | latest |
+| 🐼 Pandas | latest |
+| 📊 Matplotlib | latest |
+| 🤖 TensorFlow / Keras | 2.x |
+| 🧪 scikit-learn | 1.0+ |
+| 🔗 scikeras | latest |
 
-## Dependencies
-
-- Python 3.x
-- NumPy
-- Pandas
-- Matplotlib
-- scikit-learn
-- TensorFlow / Keras
+## 📦 Dependencies
 
 ```bash
-pip install numpy pandas matplotlib scikit-learn tensorflow
+pip install numpy pandas matplotlib scikit-learn tensorflow scikeras
 ```
 
-## Usage
+## 🚀 How to Run
 
-```bash
-# Train and predict
-python ann_new.py
+1. Clone the repository:
 
-# Train, cross-validate, and grid-search
-python evaluating_improving_tuning.py
-```
+   ```bash
+   git clone https://github.com/stabgan/ANN-on-Churn-Modelling-Dataset-using-Keras.git
+   cd ANN-on-Churn-Modelling-Dataset-using-Keras
+   ```
 
-## Known Bugs & Deprecations
+2. Install dependencies:
 
-| Issue | Location | Fix |
-|---|---|---|
-| `OneHotEncoder(categorical_features=[1])` removed in scikit-learn ≥ 0.22 | both scripts | Use `ColumnTransformer` + `OneHotEncoder` instead |
-| `from keras.wrappers.scikit_learn import KerasClassifier` removed in Keras 3 / TF 2.16+ | `evaluating_improving_tuning.py` | Use `scikeras.wrappers.KerasClassifier` (`pip install scikeras`) |
-| `Dropout(p=0.1)` — parameter is `rate`, not `p` | `evaluating_improving_tuning.py` (commented out) | Change to `Dropout(rate=0.1)` |
-| Top-level `import keras` may fail without standalone Keras installed | both scripts | Use `from tensorflow import keras` or install `keras` separately |
+   ```bash
+   pip install numpy pandas matplotlib scikit-learn tensorflow scikeras
+   ```
 
-## License
+3. Train the model and predict:
+
+   ```bash
+   python ann_new.py
+   ```
+
+4. Train, cross-validate, and grid-search:
+
+   ```bash
+   python evaluating_improving_tuning.py
+   ```
+
+## ⚠️ Known Issues
+
+- `OneHotEncoder` with `ColumnTransformer` assumes column index 1 is the Geography column after label encoding. If the dataset schema changes, the transformer index must be updated.
+- Grid search in `evaluating_improving_tuning.py` with `n_jobs = -1` can be memory-intensive. Reduce `cv` folds or run on a machine with sufficient RAM.
+- The dataset (`Churn_Modelling.csv`) must be in the same directory as the scripts when running.
+
+## 📄 License
 
 [MIT](LICENSE)
